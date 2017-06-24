@@ -61,11 +61,30 @@
           retval;                                               \
         })
 
-bool
-mine (void * info, pid_t thread_id)
+
+/* PROJECT POLLO */
+tid_t thr_create(const char *name, thread_func *function, void *aux)
 {
-  return syscall2 (SYS_MINE, info, thread_id);
+  return syscall3(SYS_THR_CREATE, name, function, aux);
 }
+
+int semaphore_init(int location, unsigned value)
+{
+  return syscall2(SYS_SEMAPHORE_INIT,location, value);
+}
+
+int semaphore_post(int location)
+{
+  return syscall1(SYS_SEMAPHORE_WAIT,location);
+}
+
+int semaphore_wait(int location)
+{
+  return syscall1(SYS_SEMAPHORE_POST,location);
+}
+
+
+//**********************//
 
 void
 halt (void)

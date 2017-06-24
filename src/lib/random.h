@@ -6,5 +6,6 @@
 void random_init (unsigned seed);
 void random_bytes (void *, size_t);
 unsigned long random_ulong (void);
+unsigned int random_uint (void);
 
 #endif /* lib/random.h */

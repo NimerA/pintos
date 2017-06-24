@@ -8,6 +8,19 @@
 typedef int pid_t;
 #define PID_ERROR ((pid_t) -1)
 
+
+
+
+//**********************************************
+/* Thread identifier. */
+typedef int tid_t;
+#define TID_ERROR ((tid_t) -1)
+
+typedef void thread_func (void *aux);
+//********************************************
+
+
+
 /* Map region identifier. */
 typedef int mapid_t;
 #define MAP_FAILED ((mapid_t) -1)
@@ -19,8 +32,15 @@ typedef int mapid_t;
 #define EXIT_SUCCESS 0          /* Successful execution. */
 #define EXIT_FAILURE 1          /* Unsuccessful execution. */
 
-/* Projects 2 and later. */
-bool mine (void * info, pid_t thread_id);
+
+//ADDED THIS 
+tid_t thr_create(const char *name, thread_func *function, void *aux);
+
+int semaphore_init(int location, unsigned value);
+int semaphore_wait(int location);
+int semaphore_post(int location);
+
+//*************************************
 void halt (void) NO_RETURN;
 void exit (int status) NO_RETURN;
 pid_t exec (const char *file);
