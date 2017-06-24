@@ -1,0 +1,22 @@
+make clean
+make
+cd ..
+cd examples/
+make clean
+make
+cd ..
+cd userprog/
+pintos-mkdisk build/mydisk.dsk --filesys-size=10 
+pintos --qemu --disk=build/mydisk.dsk -- -f -q
+pintos --qemu --disk=build/mydisk.dsk -p ../examples/consumer -a consumer -- -q
+pintos --qemu --disk=build/mydisk.dsk -p ../examples/producer -a producer -- -q
+pintos --qemu --disk=build/mydisk.dsk -p ../examples/ejercicio1 -a ejercicio1 -- -q
+
+pintos --qemu --disk=build/mydisk.dsk -p ../examples/philosopher -a philosopher -- -q
+pintos --qemu --disk=build/mydisk.dsk -p ../examples/ejercicio2 -a ejercicio2 -- -q
+
+pintos --qemu --disk=build/mydisk.dsk -p ../examples/reader -a reader -- -q
+pintos --qemu --disk=build/mydisk.dsk -p ../examples/writer -a writer -- -q
+pintos --qemu --disk=build/mydisk.dsk -p ../examples/ejercicio3 -a ejercicio3 -- -q
+
+pintos --qemu --disk=build/mydisk.dsk -- run ejercicio2

@@ -36,8 +36,17 @@ static int memread_user (void *src, void *des, size_t bytes);
 enum fd_search_filter { FD_FILE = 1, FD_DIRECTORY = 2 };
 static struct file_desc* find_file_desc(struct thread *, int fd, enum fd_search_filter flag);
 
-bool sys_mine (struct t_info * info, pid_t thread_id);
-void print_info(struct thread *t, void *aux UNUSED);
+//PROJECT
+tid_t sys_thr_create(const char *name, thread_func *function, void *aux);
+
+struct semaphore sema[10];
+int used_Semaphores = 0;
+
+int sys_semaphore_init (int location, unsigned value);
+int sys_semaphore_wait (int location);
+int sys_semaphore_post (int location);
+
+//*******************************
 void sys_halt (void);
 void sys_exit (int);
 pid_t sys_exec (const char *cmdline);
@@ -254,19 +263,45 @@ syscall_handler (struct intr_frame *f)
       sys_close(fd);
       break;
     }
-
-  case SYS_MINE:
+  case SYS_THR_CREATE:
     {
-      struct t_info * info;
-      pid_t thread_id;
+      const char *name;
+      thread_func *function;
+      void *aux;
 
-      memread_user(f->esp + 4, &info, sizeof(info));
-      memread_user(f->esp + 8, &thread_id, sizeof(thread_id));
+      memread_user(f->esp + 4, &name, sizeof(char*));
+      memread_user(f->esp + 8, &function, sizeof(thread_func));
+      memread_user(f->esp + 12, &aux, sizeof(void*));
 
-      f->eax = sys_mine(info, thread_id);
+      f->eax = sys_thr_create (name, function, aux);
       break;
     }
+  //******************************* SEMAPHORE ****************
+  case SYS_SEMAPHORE_INIT:
+    {
+      int location;
+      unsigned value;
 
+      memread_user(f->esp + 4, &location, sizeof(location));
+      memread_user(f->esp + 8, &value, sizeof(value));
+      f->eax = sys_semaphore_init(location, value);
+      break;
+    }
+  case SYS_SEMAPHORE_WAIT:
+    {
+      int id;
+      memread_user(f->esp + 4, &id, sizeof(id));
+      f->eax = sys_semaphore_wait(id);
+      break;
+    }
+  case SYS_SEMAPHORE_POST:
+    {
+      int id;
+      memread_user(f->esp + 4, &id, sizeof(id));
+      f->eax = sys_semaphore_post(id);
+      break;
+    }
+    //*******************************************************
 #ifdef VM
   case SYS_MMAP: // 13
     {
@@ -366,15 +401,27 @@ syscall_handler (struct intr_frame *f)
 
 /****************** System Call Implementations ********************/
 
-void print_info(struct thread *t, void *aux UNUSED){
-  printf("Thread: %d\tT_Run: %d\tT_Wait: %d\tPriority: %d\n", t->tid, t->times_running, t->times_waiting, t->priority);
+//****************************** SEMPAHORES **********************
+
+int sys_semaphore_init(int location, unsigned value){
+  sema_init(&sema[location], value);
+  return 0;
 }
 
-bool sys_mine(struct t_info * info, pid_t thread_id) {
-  enum intr_level oldlevel = intr_disable ();
-  get_thread(info, thread_id);
-  intr_set_level (oldlevel);
-  return true;
+int sys_semaphore_post(int location){
+  sema_up(&sema[location]);
+  return 0;
+}
+
+int sys_semaphore_wait(int location){
+  sema_down(&sema[location]);
+  return 0;
+}
+
+//****************************** SEMPAHORES **********************
+tid_t sys_thr_create(const char *name, thread_func *function, void *aux)
+{
+  return thread_create(name, 31, function, aux);
 }
 
 void sys_halt(void) {
