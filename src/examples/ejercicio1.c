@@ -6,8 +6,10 @@
     int i;
     int pid[4];
 
-    semaphore_init(0, 1); //FULL
-    semaphore_init(1, 1); //EMPTY
+    //semaphore_init(0, 1); //FULL
+    //semaphore_init(1, 1); //EMPTY
+    mutex_init(0); //mutex full
+    mutex_init(1); //mutex empty
 
     pid[0] = exec("producer 1");
     pid[1] = exec("producer 2");

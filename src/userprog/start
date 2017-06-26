@@ -19,4 +19,4 @@ pintos --qemu --disk=build/mydisk.dsk -p ../examples/reader -a reader -- -q
 pintos --qemu --disk=build/mydisk.dsk -p ../examples/writer -a writer -- -q
 pintos --qemu --disk=build/mydisk.dsk -p ../examples/ejercicio3 -a ejercicio3 -- -q
 
-pintos --qemu --disk=build/mydisk.dsk -- run ejercicio2
+pintos --qemu --disk=build/mydisk.dsk -- run ejercicio1

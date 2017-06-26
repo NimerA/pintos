@@ -40,11 +40,15 @@ static struct file_desc* find_file_desc(struct thread *, int fd, enum fd_search_
 tid_t sys_thr_create(const char *name, thread_func *function, void *aux);
 
 struct semaphore sema[10];
-int used_Semaphores = 0;
+struct semaphore mutex[10];
 
 int sys_semaphore_init (int location, unsigned value);
 int sys_semaphore_wait (int location);
 int sys_semaphore_post (int location);
+
+int sys_mutex_init(int location);
+int sys_mutex_lock(int location);
+int sys_mutex_unlock(int location);
 
 //*******************************
 void sys_halt (void);
@@ -302,6 +306,29 @@ syscall_handler (struct intr_frame *f)
       break;
     }
     //*******************************************************
+    //************************* MUTEX ***********************
+  case SYS_MUTEX_INIT:
+    {
+      int location;
+      memread_user(f->esp + 4, &location, sizeof(location));
+      f->eax = sys_mutex_init(location);
+      break;
+    }
+  case SYS_MUTEX_LOCK:
+    {
+      int location;
+      memread_user(f->esp + 4, &location, sizeof(location));
+      f->eax = sys_mutex_lock(location);
+      break;
+    }
+  case SYS_MUTEX_UNLOCK:
+    {
+      int location;
+      memread_user(f->esp + 4, &location, sizeof(location));
+      f->eax = sys_mutex_unlock(location);
+      break;
+    }
+    //******************************************************
 #ifdef VM
   case SYS_MMAP: // 13
     {
@@ -400,6 +427,24 @@ syscall_handler (struct intr_frame *f)
 }
 
 /****************** System Call Implementations ********************/
+
+int sys_mutex_init(int location){
+  sema_init(&mutex[location], 1);
+  return 0;
+}
+
+int sys_mutex_lock(int location){
+  if(mutex[location].value == 0)
+    sema_up(&mutex[location]);
+  return 0;
+}
+
+int sys_mutex_unlock(int location){
+  sema_down(&mutex[location]);
+  return 0;
+}
+
+
 
 //****************************** SEMPAHORES **********************
 

@@ -9,15 +9,13 @@
     int FULL = 0;
     int EMPTY = 1;
     int i = 100;
-    int j = 10000000;
     while(i>0)
     {
-        semaphore_wait(FULL);
+        //semaphore_wait(FULL);
+        mutex_lock(FULL);
         printf("Consumer :%d has consumed\n",ConsumidorID);
-        while(j>0)
-        j--;
-
-        semaphore_post(EMPTY);
+        mutex_unlock(EMPTY);
+        //semaphore_post(EMPTY);
         i--;
     }
     

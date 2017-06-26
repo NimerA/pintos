@@ -9,14 +9,13 @@
      int FULL = 0;
      int EMPTY = 1;
      int i = 100;
-     int j = 1000;
     while(i>0)
     {
-        semaphore_wait(EMPTY);
+        //semaphore_wait(EMPTY);
+        mutex_lock(EMPTY);
         printf("Producer :%d is producing\n", ProducerID);
-        while(j>0)
-            j--;
-        semaphore_post(FULL);
+        mutex_unlock(FULL);
+        //semaphore_post(FULL);
         i--;
     }
  }

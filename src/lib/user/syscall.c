@@ -82,7 +82,21 @@ int semaphore_wait(int location)
 {
   return syscall1(SYS_SEMAPHORE_POST,location);
 }
+/*============ MUTEX =============*/
+int mutex_init(int location)
+{
+  return syscall1(SYS_MUTEX_INIT,location);
+}
 
+int mutex_lock(int location)
+{
+  return syscall1(SYS_MUTEX_LOCK,location);
+}
+
+int mutex_unlock(int location)
+{
+  return syscall1(SYS_MUTEX_UNLOCK,location);
+}
 
 //**********************//
 

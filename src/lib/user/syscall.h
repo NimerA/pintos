@@ -40,6 +40,10 @@ int semaphore_init(int location, unsigned value);
 int semaphore_wait(int location);
 int semaphore_post(int location);
 
+int mutex_init(int location);
+int mutex_lock(int location);
+int mutex_unlock(int location);
+
 //*************************************
 void halt (void) NO_RETURN;
 void exit (int status) NO_RETURN;
